@@ -1,0 +1,59 @@
+<div class="field" id="clientId-field">
+	<div class="heading">
+		<label for="clientId">Client ID</label>
+	</div>
+
+	<div class="input">
+		<input class="text  fullwidth" name="clientId" id="clientId" value="{{ settings.clientId }}">
+	</div>
+</div>
+
+<div class="field" id="clientSecret-field">
+	<div class="heading">
+		<label for="clientSecret">Client Secret</label>
+	</div>
+
+	<div class="input">
+		<input class="text  fullwidth" name="clientSecret" id="clientSecret" value="{{ settings.clientSecret }}">
+	</div>
+</div>
+
+<div class="field" id="sectionId-field">
+	<div class="heading">
+		<label for="sectionId">Section ID</label>
+	</div>
+
+	<div class="input">
+		<input class="text  fullwidth" name="sectionId" id="sectionId" value="{{ settings.sectionId }}">
+	</div>
+</div>
+
+<div class="field" id="entryTypeId-field">
+	<div class="heading">
+		<label for="entryTypeId">Entry Type ID</label>
+	</div>
+
+	<div class="input">
+		<input class="text  fullwidth" name="entryTypeId" id="entryTypeId" value="{{ settings.entryTypeId }}">
+	</div>
+</div>
+
+<div class="field" id="soundCloudUserId-field">
+	<div class="heading">
+		<label for="soundCloudUserId">SoundCloud User ID</label>
+	</div>
+
+	<div class="input">
+		<input class="text  fullwidth" name="soundCloudUserId" id="soundCloudUserId" value="{{ settings.soundCloudUserId }}">
+	</div>
+</div>
+
+<div class="field" id="categories-field">
+	<div class="heading">
+		<label for="categories">Categories</label>
+	</div>
+
+	<div class="input">
+		<input class="text  fullwidth" name="categories" id="categories" value="{{ settings.categories|join(', ') }}">
+	</div>
+</div>
