@@ -128,6 +128,7 @@ class SoundCloudLoaderPlugin extends BasePlugin
 		$soundCloudChannelSection->handle = 'soundCloud';
 		$soundCloudChannelSection->type = SectionType::Channel;
 		$soundCloudChannelSection->hasUrls = false;
+		$soundCloudChannelSection->enableVersioning = false;
 
 		$primaryLocaleId = craft()->i18n->getPrimarySiteLocaleId();
 		$locales[$primaryLocaleId] = new SectionLocaleModel(array(
