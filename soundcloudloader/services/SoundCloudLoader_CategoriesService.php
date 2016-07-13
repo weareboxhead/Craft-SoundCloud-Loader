@@ -162,8 +162,8 @@ class SoundCloudLoader_CategoriesService extends BaseApplicationComponent
 			else {
 				$categories['standardCategories'] = $standardCategories;
 			}
-
-			return $categories;
 		}
+
+		return $categories;
 	}
 }
