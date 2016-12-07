@@ -197,7 +197,7 @@ class SoundCloudLoaderPlugin extends BasePlugin
 	{
 		Craft::log('Updating settings.');
 
-		if (!isset($settings['categories']))
+		if (empty($settings['categories']))
 		{
 			Craft::log('No categories set.');
 
