@@ -18,6 +18,18 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 
 		$settings = craft()->plugins->getPlugin('soundCloudLoader')->getSettings();
 
+		// These settings are required for the process to work
+		$requiredSettings = array('clientId', 'clientSecret', 'sectionId', 'entryTypeId', 'soundCloudUserId');
+
+		// Foreach required setting
+		foreach ($requiredSettings as $setting) {
+			// If it is empty
+			if (empty($settings->{$setting})) {
+				// Don't go on
+				return false;
+			}
+		}
+
 		$clientId 				= $settings->clientId;
 		$clientSecret 			= $settings->clientSecret;
 
@@ -234,6 +246,11 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 
 	public function syncWithRemote()
 	{
+		// If we don't have the required connection, don't do this
+		if (!$this->soundCloud) {
+			return false;
+		}
+
 		// Get remote data
 		$remoteData = $this->getRemoteData();
 		// Get local data
