@@ -44,8 +44,12 @@ class SoundCloudLoaderPlugin extends BasePlugin
 		}
 		else
 		{
-			Craft::log('Could not save the SoundCloud field group.', LogLevel::Warning);
+			Craft::log('Could not save the SoundCloud field group.', LogLevel::Error);
+
+			return false;
 		}
+
+		Craft::log('Creating the basic SoundCloud Fields.');
 
 		$fields = array(
 			'soundCloudFileId'				=>		'File Id',
@@ -106,13 +110,15 @@ class SoundCloudLoaderPlugin extends BasePlugin
 			}
 			else
 			{
-				Craft::log('Could not save the ' . $name . ' field.', LogLevel::Warning);
+				Craft::log('Could not save the ' . $name . ' field.', LogLevel::Error);
+
+				return false;
 			}
 		}
 
-		// SoundCloud channel section
+		// SoundCloud Channel
 
-		Craft::log('Creating the SoundCloud channel section.');
+		Craft::log('Creating the SoundCloud Channel.');
 
 		$soundCloudLayout = craft()->fields->assembleLayout(
 			array(
@@ -140,11 +146,13 @@ class SoundCloudLoaderPlugin extends BasePlugin
 		// Save it
 		if (craft()->sections->saveSection($soundCloudChannelSection))
 		{
-			Craft::log('SoundCloud channel section created successfully.');
+			Craft::log('SoundCloud Channel created successfully.');
 		}
 		else
 		{
-			Craft::log('Could not save the SoundCloud channel section.', LogLevel::Warning);
+			Craft::log('Could not save the SoundCloud Channel.', LogLevel::Error);
+
+			return false;
 		}
 
 		$soundCloudEntryTypes = $soundCloudChannelSection->getEntryTypes();
@@ -155,11 +163,13 @@ class SoundCloudLoaderPlugin extends BasePlugin
 
 		if (craft()->sections->saveEntryType($soundCloudEntryType))
 		{
-			Craft::log('SoundCloud channel section entry type saved successfully.');
+			Craft::log('SoundCloud Channel entry type saved successfully.');
 		}
 		else
 		{
-			Craft::log('Could not save the SoundCloud channel section entry type.', LogLevel::Warning);
+			Craft::log('Could not save the SoundCloud Channel entry type.', LogLevel::Error);
+
+			return false;
 		}
 
 		// Save the settings based on the section and entry type we just created
@@ -266,11 +276,11 @@ class SoundCloudLoaderPlugin extends BasePlugin
 
 				if (craft()->sections->saveEntryType($entryType))
 				{
-					Craft::log('SoundCloud channel section entry type saved successfully.');
+					Craft::log('SoundCloud Channel entry type saved successfully.');
 				}
 				else
 				{
-					Craft::log('Could not save the SoundCloud channel section entry type.', LogLevel::Warning);
+					Craft::log('Could not save the SoundCloud Channel entry type.', LogLevel::Warning);
 				}
 			}
 		}

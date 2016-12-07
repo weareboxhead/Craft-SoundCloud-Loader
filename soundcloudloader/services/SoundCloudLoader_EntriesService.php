@@ -25,6 +25,8 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 		foreach ($requiredSettings as $setting) {
 			// If it is empty
 			if (empty($settings->{$setting})) {
+				Craft::log('No ' . $setting . ' provided in settings', LogLevel::Error);
+
 				// Don't go on
 				return false;
 			}
@@ -256,18 +258,27 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
     	$success = craft()->entries->saveEntry($entry);
 
     	// If the attempt failed
-    	if (!$success) Craft::log('Couldn’t save entry ' . $entry->getContent()->id, LogLevel::Error);
+    	if (!$success) {
+    		Craft::log('Couldn’t save entry ' . $entry->getContent()->id, LogLevel::Warning);
+    	}
     }
 
 	public function syncWithRemote()
 	{
 		// If we don't have the required connection, don't do this
 		if (!$this->soundCloud) {
+			Craft::log('No connection established!', LogLevel::Error);
+
 			return false;
 		}
 
+		Craft::log('Getting remote data');
+
 		// Get remote data
 		$remoteData = $this->getRemoteData();
+
+		Craft::log('Getting local data');
+
 		// Get local data
 		$localData 	= $this->getLocalData();
 
@@ -278,6 +289,8 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 		// Determine which entries need updating (all active tracks which we aren't about to create)
 		$updatingTracks =	array_diff($remoteData['ids'], $missingTracks);
 
+		Craft::log('Creating missing tracks');
+
 		// For each missing id
 		foreach ($missingTracks as $id)
 		{
@@ -285,12 +298,16 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 		    $this->createEntry($remoteData['tracks'][$id]);
 		}
 
+		Craft::log('Closing removed tracks');
+
 		// For each redundant entry
 		foreach ($removedTracks as $id)
 		{
 			// Disable it
 		    $this->closeEntry($localData['tracks'][$id]);
 		}
+
+		Craft::log('Updating other tracks');
 
 		// For each updating track
 		foreach ($updatingTracks as $id) {
