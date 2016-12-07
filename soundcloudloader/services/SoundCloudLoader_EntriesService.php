@@ -218,10 +218,25 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 
     private function updateEntry($localEntry, $remoteEntry)
     {
-    	// Anything we like can go here
-    	$content = array(
-    		'soundCloudPlaybackCount'	=>	$remoteEntry['playback_count'],
-		);
+		// Set up an empty array for our updating content
+		$content = array();
+
+		// Get the remote playback count
+		$remotePlaybackCount 	= (string)$remoteEntry['playback_count'];
+		// Get the local playback count
+		$localPlaybackCount 	= $localEntry->soundCloudPlaybackCount;
+
+		// If it has changed
+		if ($remotePlaybackCount !== $localPlaybackCount) {
+			// Add this to our updating content array
+			$content['soundCloudPlaybackCount'] = $remotePlaybackCount;
+		}
+
+		// If we have no updating content, don't update the entry
+		if (!count($content))
+		{
+			return true;
+		}
 
     	$localEntry->setContentFromPost($content);
 
