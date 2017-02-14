@@ -52,8 +52,8 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 	{
 		// Get the user's tracks
 		$tracks = json_decode($this->soundCloud->get('users/' . $this->soundCloudUserId . '/tracks', array(
-			    'limit' => $this->callLimit,
-			    'offset' => $offset,
+				'limit' => $this->callLimit,
+				'offset' => $offset,
 			)
 		), true);
 
@@ -198,28 +198,28 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 
 	private function createEntry($data)
 	{
-        // Create a new instance of the Craft Entry Model
-        $entry = new EntryModel();
-        // Set the section id
-        $entry->sectionId = $this->sectionId;
-        // Set the entry type
-        $entry->typeId 	= $this->entryTypeId;
-        // Set the author as super admin
-        $entry->authorId = 1;
-        // Set disabled to begin with
-        $entry->enabled = false;
-        // Set the publish date as post date
-        $entry->postDate = $this->getPublishDate($data);
-        // Set the title
-        $entry->getContent()->title = $data['title'];
-        // Set the other content
-        $entry->setContentFromPost($this->parseContent($data));
+		// Create a new instance of the Craft Entry Model
+		$entry = new EntryModel();
+		// Set the section id
+		$entry->sectionId = $this->sectionId;
+		// Set the entry type
+		$entry->typeId 	= $this->entryTypeId;
+		// Set the author as super admin
+		$entry->authorId = 1;
+		// Set disabled to begin with
+		$entry->enabled = false;
+		// Set the publish date as post date
+		$entry->postDate = $this->getPublishDate($data);
+		// Set the title
+		$entry->getContent()->title = $data['title'];
+		// Set the other content
+		$entry->setContentFromPost($this->parseContent($data));
 		// Save the entry!
-        $this->saveEntry($entry);
-    }
+		$this->saveEntry($entry);
+	}
 
-    private function updateEntry($localEntry, $remoteEntry)
-    {
+	private function updateEntry($localEntry, $remoteEntry)
+	{
 		// Set up an empty array for our updating content
 		$content = array();
 
@@ -240,28 +240,28 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 			return true;
 		}
 
-    	$localEntry->setContentFromPost($content);
+		$localEntry->setContentFromPost($content);
 
-    	$this->saveEntry($localEntry);
-    }
+		$this->saveEntry($localEntry);
+	}
 
-    private function closeEntry($entry)
-    {
+	private function closeEntry($entry)
+	{
 		// Set the status to disabled
-    	$entry->enabled = false;
-    	// Save it
-    	$this->saveEntry($entry);
-    }
+		$entry->enabled = false;
+		// Save it
+		$this->saveEntry($entry);
+	}
 	
-    private function saveEntry($entry)
-    {
-    	$success = craft()->entries->saveEntry($entry);
+	private function saveEntry($entry)
+	{
+		$success = craft()->entries->saveEntry($entry);
 
-    	// If the attempt failed
-    	if (!$success) {
-    		Craft::log('Couldn’t save entry ' . $entry->getContent()->id, LogLevel::Warning);
-    	}
-    }
+		// If the attempt failed
+		if (!$success) {
+			Craft::log('Couldn’t save entry ' . $entry->getContent()->id, LogLevel::Warning);
+		}
+	}
 
 	public function syncWithRemote()
 	{
@@ -295,7 +295,7 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 		foreach ($missingTracks as $id)
 		{
 			// Create this entry
-		    $this->createEntry($remoteData['tracks'][$id]);
+			$this->createEntry($remoteData['tracks'][$id]);
 		}
 
 		Craft::log('Closing removed tracks');
@@ -304,7 +304,7 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 		foreach ($removedTracks as $id)
 		{
 			// Disable it
-		    $this->closeEntry($localData['tracks'][$id]);
+			$this->closeEntry($localData['tracks'][$id]);
 		}
 
 		Craft::log('Updating other tracks');
