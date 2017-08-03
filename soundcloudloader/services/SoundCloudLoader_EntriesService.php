@@ -140,8 +140,7 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 		return strtotime($string); 
 	}
 
-	private function parseContent($data)
-	{
+	private function getStandardContent($data) {
 		// Check for whether this track has its own artwork, and if not, use the avatar
 		if (!empty($data['artwork_url'])) {
 			$artworkUrl = $data['artwork_url'];
@@ -149,7 +148,6 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 			$artworkUrl = $data['user']['avatar_url']; 
 		}
 
-		// The standard content
 		$content = array(
 			'soundCloudFileId'				=>	$data['id'],
 			'soundCloudUserPermalink'		=>	$data['user']['permalink'],
@@ -190,9 +188,6 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 			'soundCloudContentSize'			=>	$data['original_content_size'],
 		);
 
-		// Merge the parsed categories into the content
-		$content = array_merge($content, craft()->soundCloudLoader_categories->getCategories($data, $this->categoryGroups));
-
 		return $content;
 	}
 
@@ -212,35 +207,59 @@ class SoundCloudLoader_EntriesService extends BaseApplicationComponent
 		$entry->postDate = $this->getPublishDate($data);
 		// Set the title
 		$entry->getContent()->title = $data['title'];
+
+		// The standard content
+		$content = $this->getStandardContent($data);
+
+		// Merge the parsed categories into the content
+		$content = array_merge($content, craft()->soundCloudLoader_categories->getCategories($data, $this->categoryGroups));
+
 		// Set the other content
-		$entry->setContentFromPost($this->parseContent($data));
+		$entry->setContentFromPost($content);
 		// Save the entry!
 		$this->saveEntry($entry);
 	}
 
 	private function updateEntry($localEntry, $remoteEntry)
 	{
+		$updatable = $this->getStandardContent($remoteEntry);
+
+		// Set up a null variable for the new title
+		$newTitle = null;
 		// Set up an empty array for our updating content
-		$content = array();
+		$updating = array();
 
-		// Get the remote playback count
-		$remotePlaybackCount 	= (string)$remoteEntry['playback_count'];
-		// Get the local playback count
-		$localPlaybackCount 	= $localEntry->soundCloudPlaybackCount;
+		// Check through each of the standard text fields
+		foreach ($updatable as $fieldHandle => $soundCloudValue) {
+			// If our local value is not the same as the remote value
+			// (allow coercion of variable type)
+			if ($localEntry->{$fieldHandle} != $soundCloudValue) {
+				// Null values need converting to empty strings so they are updated correctly
+				if (is_null($soundCloudValue)) {
+					$soundCloudValue = '';
+				}
 
-		// If it has changed
-		if ($remotePlaybackCount !== $localPlaybackCount) {
-			// Add this to our updating content array
-			$content['soundCloudPlaybackCount'] = $remotePlaybackCount;
+				// Add this to the updating array
+				$updating[$fieldHandle] = $soundCloudValue;
+			}
+		}
+
+		// If our title is different to the remote one
+		if ($localEntry->title !== $remoteEntry['title']) {
+			$newTitle = $remoteEntry['title'];
 		}
 
 		// If we have no updating content, don't update the entry
-		if (!count($content))
+		if (!count($updating) && !$newTitle)
 		{
 			return true;
 		}
 
-		$localEntry->setContentFromPost($content);
+		if ($newTitle) {
+			$localEntry->getContent()->title = $newTitle;
+		}
+
+		$localEntry->setContentFromPost($updating);
 
 		$this->saveEntry($localEntry);
 	}
